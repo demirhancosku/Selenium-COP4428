@@ -1,17 +1,23 @@
+import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
+
 public class FirstTest {
 
     public WebDriver driver;
 
-    @Test
-    public void myFirstTest() throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\cosku.demirhan\\Desktop\\chromedriver.exe");
-        this.driver = new ChromeDriver();
 
+    @Test
+    public void shouldLogin() throws InterruptedException {
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\cosku.demirhan\\Desktop\\chromedriver.exe");
+
+        this.driver = new ChromeDriver();
         this.driver.get("http://www.n11.com");
 
         WebElement signInButton = this.driver.findElement(By.cssSelector("a.btnSignIn"));
@@ -26,6 +32,20 @@ public class FirstTest {
         WebElement signInCButton = this.driver.findElement(By.id("loginButton"));
         signInCButton.click();
 
+        String username = this.driver.findElement(By.className("username")).getText();
+
+        assertThat("When a buyyer logged in",username,equalTo("Test Mock"));
+
+    }
+
+
+    @Test
+    public void sholdSearch() throws InterruptedException {
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\cosku.demirhan\\Desktop\\chromedriver.exe");
+
+        this.driver = new ChromeDriver();
+        this.driver.get("http://www.n11.com");
+
         WebElement searchBox = this.driver.findElement(By.id("searchData"));
         searchBox.sendKeys("Samsung");
 
@@ -33,34 +53,10 @@ public class FirstTest {
         WebElement searchButton = this.driver.findElement(By.className("searchBtn"));
         searchButton.click();
 
-        WebElement featuredProduct = this.driver.findElement(By.cssSelector(".catalogView .pro:first-child a"));
-        featuredProduct.click();
+        String searchResultBreadCrumb = this.driver.findElement(By.id("breadCrumb")).getText();
 
-        Thread.sleep(2000);
-
-        try {
-            this.addToCart();
-        } catch (NoSuchElementException ex) {
-            try {
-                WebElement fancybox = this.driver.findElement(By.className("fancybox-close"));
-                fancybox.click();
-            } catch (NoSuchElementException ex2) {
-            }
-
-            this.addToCart();
-        }
-
-
-        //driver.quit();
+        assertThat("When a buyyer search for a key",searchResultBreadCrumb,containsString("Samsung"));
 
     }
 
-
-    private void addToCart() {
-        new Select(this.driver.findElement(By.cssSelector("#skuArea select"))).selectByVisibleText("Siyah");
-
-        WebElement instantPay = this.driver.findElement(By.id("instantPay"));
-        instantPay.click();
-
-    }
 }
